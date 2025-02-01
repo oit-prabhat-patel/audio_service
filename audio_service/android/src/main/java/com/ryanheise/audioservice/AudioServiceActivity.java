@@ -12,4 +12,10 @@ public class AudioServiceActivity extends FlutterActivity {
     public FlutterEngine provideFlutterEngine(@NonNull Context context) {
         return AudioServicePlugin.getFlutterEngine(context);
     }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);  // Ensures Flutter receives the latest intent
+    }
 }
