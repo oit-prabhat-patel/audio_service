@@ -627,6 +627,9 @@ class MediaItem {
   /// The rating of the media item.
   final Rating? rating;
 
+  /// Whether this is a live stream.
+  final bool? isLive;
+
   /// A map of additional metadata for the media item.
   ///
   /// The values must be of type `int`, `String`, `bool` or `double`.
@@ -649,6 +652,7 @@ class MediaItem {
     this.displaySubtitle,
     this.displayDescription,
     this.rating,
+    this.isLive,
     this.extras,
   });
 
@@ -676,6 +680,7 @@ class MediaItem {
         displaySubtitle: displaySubtitle,
         displayDescription: displayDescription,
         rating: rating?._toMessage(),
+        isLive: isLive,
         extras: extras,
       );
 
@@ -699,6 +704,7 @@ abstract class MediaItemCopyWith {
     String? displaySubtitle,
     String? displayDescription,
     Rating? rating,
+    bool? isLive,
     Map<String, dynamic>? extras,
   });
 }
@@ -727,6 +733,7 @@ class _MediaItemCopyWith extends MediaItemCopyWith {
     Object? displaySubtitle = _fakeNull,
     Object? displayDescription = _fakeNull,
     Object? rating = _fakeNull,
+    Object? isLive = _fakeNull,
     Object? extras = _fakeNull,
   }) =>
       MediaItem(
@@ -749,6 +756,7 @@ class _MediaItemCopyWith extends MediaItemCopyWith {
             ? value.displayDescription
             : displayDescription as String?,
         rating: rating == _fakeNull ? value.rating : rating as Rating?,
+        isLive: isLive == _fakeNull ? value.isLive : isLive as bool?,
         extras: extras == _fakeNull
             ? value.extras
             : extras as Map<String, dynamic>?,
@@ -2392,11 +2400,10 @@ class IsolatedAudioHandler extends CompositeAudioHandler {
   /// isolate is able to register another new handler with the same name before
   /// this isolate can.
   IsolatedAudioHandler(
-    AudioHandler inner, {
+    super.inner, {
     this.portName = defaultPortName,
     bool overridePortName = false,
-  })  : assert(!kIsWeb),
-        super(inner) {
+  }) : assert(!kIsWeb) {
     _receivePort.listen((dynamic event) async {
       final request = event as _IsolateRequest;
       switch (request.method) {
@@ -3311,9 +3318,10 @@ mixin QueueHandler on BaseAudioHandler {
   }
 
   @override
-  Future<void> updateQueue(List<MediaItem> newQueue) async {
-    queue.add(queue.nvalue!..replaceRange(0, queue.nvalue!.length, newQueue));
-    await super.updateQueue(newQueue);
+  Future<void> updateQueue(List<MediaItem> queue) async {
+    this.queue.add(
+        this.queue.nvalue!..replaceRange(0, this.queue.nvalue!.length, queue));
+    await super.updateQueue(queue);
   }
 
   @override
@@ -3599,6 +3607,7 @@ extension _MediaItemMessageExtension on MediaItemMessage {
         displaySubtitle: displaySubtitle,
         displayDescription: displayDescription,
         rating: rating?.toPlugin(),
+        isLive: isLive,
         extras: extras,
       );
 }
@@ -4042,7 +4051,7 @@ class AudioServiceWidget extends StatelessWidget {
   final Widget child;
 
   /// Deprecated.
-  const AudioServiceWidget({Key? key, required this.child}) : super(key: key);
+  const AudioServiceWidget({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
