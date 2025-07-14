@@ -620,9 +620,6 @@ class MediaItemMessage {
   /// The rating of the MediaItemMessage.
   final RatingMessage? rating;
 
-  // Whether this is a livestream
-  final bool? isLive;
-
   /// A map of additional metadata for the media item.
   ///
   /// The values must be integers or strings.
@@ -645,7 +642,6 @@ class MediaItemMessage {
     this.displaySubtitle,
     this.displayDescription,
     this.rating,
-    this.isLive,
     this.extras,
   });
 
@@ -671,7 +667,6 @@ class MediaItemMessage {
             ? RatingMessage.fromMap(
                 _castMap(raw['rating'] as Map<dynamic, dynamic>)!)
             : null,
-        isLive: raw['isLive'] as bool?,
         extras: _castMap(raw['extras'] as Map<dynamic, dynamic>?),
       );
 
@@ -690,7 +685,6 @@ class MediaItemMessage {
         'displaySubtitle': displaySubtitle,
         'displayDescription': displayDescription,
         'rating': rating?.toMap(),
-        'isLive': isLive,
         'extras': extras,
       };
 }
@@ -1421,8 +1415,7 @@ class AudioServiceConfigMessage {
         'androidNotificationChannelName': androidNotificationChannelName,
         'androidNotificationChannelDescription':
             androidNotificationChannelDescription,
-        // ignore: deprecated_member_use
-        'notificationColor': notificationColor?.value, //_colorValue,
+        'notificationColor': notificationColor?.value,
         'androidNotificationIcon': androidNotificationIcon,
         'androidShowNotificationBadge': androidShowNotificationBadge,
         'androidNotificationClickStartsActivity':
@@ -1445,14 +1438,3 @@ class AudioServiceConfigMessage {
 @pragma('vm:prefer-inline')
 Map<String, dynamic>? _castMap(Map<dynamic, dynamic>? map) =>
     map?.cast<String, dynamic>();
-
-/// Reimplements deprecated Color.value.
-// extension _ColorExtension on Color {
-//   int get _colorValue =>
-//       _floatToInt8(a) << 24 |
-//       _floatToInt8(r) << 16 |
-//       _floatToInt8(g) << 8 |
-//       _floatToInt8(b) << 0;
-//
-//   int _floatToInt8(double x) => (x * 255.0).round() & 0xff;
-// }

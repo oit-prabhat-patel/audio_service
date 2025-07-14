@@ -33,7 +33,7 @@ Future<void> main() async {
 
 /// The app widget
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
 
 /// The main screen.
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   Stream<Duration> get _bufferedPositionStream => _audioHandler.playbackState
       .map((state) => state.bufferedPosition)
@@ -228,7 +228,7 @@ class MainScreen extends StatelessWidget {
 class ControlButtons extends StatelessWidget {
   final AudioPlayerHandler audioHandler;
 
-  const ControlButtons(this.audioHandler, {super.key});
+  const ControlButtons(this.audioHandler, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:js_interop' as js;
-import 'dart:js_interop_unsafe';
+import 'dart:html' as html;
+import 'dart:js' as js;
+import 'dart:js_util';
 
 import 'package:audio_service_platform_interface/audio_service_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:web/web.dart' as web;
-
 import 'js/media_session_web.dart';
 
 class AudioServiceWeb extends AudioServicePlatform {
@@ -14,16 +13,12 @@ class AudioServiceWeb extends AudioServicePlatform {
     AudioServicePlatform.instance = AudioServiceWeb();
   }
 
-  web.MediaSession get _mediaSession => web.window.navigator.mediaSession;
-
   final _mediaSessionSupported = _SupportChecker(
-    () => js.globalContext.hasProperty('MediaSession'.toJS).toDart,
+    () => js.context.hasProperty('MediaSession'),
     "MediaSession is not supported in this browser, so plugin is no-op",
   );
   final _setPositionStateSupported = _SupportChecker(
-    () => web.window.navigator.mediaSession
-        .hasProperty('setPositionState'.toJS)
-        .toDart,
+    () => hasProperty(html.window.navigator.mediaSession!, 'setPositionState'),
     "MediaSession.setPositionState is not supported in this browser",
   );
 
@@ -44,71 +39,60 @@ class AudioServiceWeb extends AudioServicePlatform {
     final state = request.state;
 
     if (state.processingState == AudioProcessingStateMessage.idle) {
-      _mediaSession.playbackState = MediaSessionPlaybackState.none;
+      MediaSession.playbackState = MediaSessionPlaybackState.none;
     } else {
       if (state.playing) {
-        _mediaSession.playbackState = MediaSessionPlaybackState.playing;
+        MediaSession.playbackState = MediaSessionPlaybackState.playing;
       } else {
-        _mediaSession.playbackState = MediaSessionPlaybackState.paused;
+        MediaSession.playbackState = MediaSessionPlaybackState.paused;
       }
     }
 
     for (final control in state.controls) {
       switch (control.action) {
         case MediaActionMessage.play:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.play,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.play(const PlayRequest());
-            }).toJS,
+            (details) => handlerCallbacks?.play(const PlayRequest()),
           );
           break;
         case MediaActionMessage.pause:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.pause,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.pause(const PauseRequest());
-            }).toJS,
+            (details) => handlerCallbacks?.pause(const PauseRequest()),
           );
           break;
         case MediaActionMessage.skipToPrevious:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.previoustrack,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.skipToPrevious(const SkipToPreviousRequest());
-            }).toJS,
+            (details) =>
+                handlerCallbacks?.skipToPrevious(const SkipToPreviousRequest()),
           );
           break;
         case MediaActionMessage.skipToNext:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.nexttrack,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.skipToNext(const SkipToNextRequest());
-            }).toJS,
+            (details) =>
+                handlerCallbacks?.skipToNext(const SkipToNextRequest()),
           );
           break;
         case MediaActionMessage.rewind:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.seekbackward,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.rewind(const RewindRequest());
-            }).toJS,
+            (details) => handlerCallbacks?.rewind(const RewindRequest()),
           );
           break;
         case MediaActionMessage.fastForward:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.seekforward,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.fastForward(const FastForwardRequest());
-            }).toJS,
+            (details) =>
+                handlerCallbacks?.fastForward(const FastForwardRequest()),
           );
           break;
         case MediaActionMessage.stop:
-          _mediaSession.setActionHandler(
+          MediaSession.setActionHandler(
             MediaSessionActions.stop,
-            ((MediaSessionActionDetails details) {
-              handlerCallbacks?.stop(const StopRequest());
-            }).toJS,
+            (details) => handlerCallbacks?.stop(const StopRequest()),
           );
           break;
         default:
@@ -120,15 +104,14 @@ class AudioServiceWeb extends AudioServicePlatform {
     for (final message in state.systemActions) {
       switch (message) {
         case MediaActionMessage.seek:
-          _mediaSession.setActionHandler(
-              'seekto',
-              ((MediaSessionActionDetails details) {
-                // Browsers use seconds
-                handlerCallbacks?.seek(SeekRequest(
-                  position: Duration(
-                      milliseconds: (details.seekTime! * 1000).round()),
-                ));
-              }).toJS);
+          MediaSession.setActionHandler('seekto',
+              (MediaSessionActionDetails details) {
+            // Browsers use seconds
+            handlerCallbacks?.seek(SeekRequest(
+              position:
+                  Duration(milliseconds: (details.seekTime * 1000).round()),
+            ));
+          });
           break;
         default:
           // no-op
@@ -145,7 +128,7 @@ class AudioServiceWeb extends AudioServicePlatform {
       final position = _minDuration(state.updatePosition, duration);
 
       // Browsers expect for seconds
-      _mediaSession.setPositionState(web.MediaPositionState(
+      MediaSession.setPositionState(MediaSessionPositionState(
         duration: duration.inMilliseconds / 1000,
         playbackRate: state.speed,
         position: position.inMilliseconds / 1000,
@@ -164,21 +147,21 @@ class AudioServiceWeb extends AudioServicePlatform {
       return;
     }
     mediaItem = request.mediaItem;
-    final artist = mediaItem!.artist ?? '';
-    final album = mediaItem!.album ?? '';
+    final artist = mediaItem!.artist;
+    final album = mediaItem!.album;
     final artUri = mediaItem!.artUri;
 
-    _mediaSession.metadata = web.MediaMetadata(
-      web.MediaMetadataInit(
-        title: mediaItem!.title,
-        artist: artist,
-        album: album,
-        artwork: [
-          if (artUri != null)
-            web.MediaImage(src: artUri.toString(), sizes: '512x512'),
-        ].toJS,
-      ),
-    );
+    MediaSession.metadata = html.MediaMetadata(<String, dynamic>{
+      'title': mediaItem!.title,
+      if (artist != null) 'artist': artist,
+      if (album != null) 'album': album,
+      'artwork': [
+        {
+          'src': artUri,
+          'sizes': '512x512',
+        }
+      ],
+    });
   }
 
   @override
@@ -186,7 +169,8 @@ class AudioServiceWeb extends AudioServicePlatform {
     if (!_mediaSessionSupported.check()) {
       return;
     }
-    _mediaSession.metadata = null;
+    final session = html.window.navigator.mediaSession!;
+    session.metadata = null;
     mediaItem = null;
   }
 
@@ -209,7 +193,6 @@ class _SupportChecker {
   _SupportChecker(this._checkCallback, this._warningMessage);
 
   bool _logged = false;
-
   bool check() {
     final result = _checkCallback();
     if (!_logged && !result) {

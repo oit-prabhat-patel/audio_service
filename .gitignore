@@ -47,7 +47,6 @@ gradlew
 gradlew.bat
 local.properties
 **/GeneratedPluginRegistrant.java
-**/.cxx/
 
 # Android Studio will place build artifacts here
 **/android/app/debug
@@ -88,8 +87,6 @@ xcuserdata
 **/Flutter/flutter_export_environment.sh
 ServiceDefinitions.json
 GeneratedPluginRegistrant.*
-.build/
-.swiftpm/
 
 # Exceptions
 !default.pbxuser

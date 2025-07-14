@@ -57,7 +57,7 @@ Future<void> main() async {
 
 /// The app widget
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,7 @@ class MainScreen extends StatelessWidget {
     'Text-To-Speech',
   ];
 
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

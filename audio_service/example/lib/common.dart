@@ -22,13 +22,13 @@ class SeekBar extends StatefulWidget {
   final ValueChanged<Duration>? onChangeEnd;
 
   const SeekBar({
-    super.key,
+    Key? key,
     required this.duration,
     required this.position,
     this.bufferedPosition = Duration.zero,
     this.onChanged,
     this.onChangeEnd,
-  });
+  }) : super(key: key);
 
   @override
   SeekBarState createState() => SeekBarState();
@@ -141,7 +141,7 @@ class HiddenThumbComponentShape extends SliderComponentShape {
 }
 
 class LoggingAudioHandler extends CompositeAudioHandler {
-  LoggingAudioHandler(super.inner) {
+  LoggingAudioHandler(AudioHandler inner) : super(inner) {
     playbackState.listen((state) {
       _log('playbackState changed: $state');
     });

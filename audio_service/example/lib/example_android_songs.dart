@@ -85,7 +85,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +98,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -225,7 +225,7 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 class SongListScreen extends StatelessWidget {
-  const SongListScreen({super.key});
+  const SongListScreen({Key? key}) : super(key: key);
 
   IconButton _button(IconData iconData, VoidCallback onPressed) => IconButton(
         icon: Icon(iconData),
@@ -303,10 +303,10 @@ class SongListScreen extends StatelessWidget {
 
 class SongTile extends StatelessWidget {
   const SongTile({
-    super.key,
+    Key? key,
     required this.song,
     this.tappable = true,
-  });
+  }) : super(key: key);
 
   final Song song;
   final bool tappable;
@@ -337,7 +337,7 @@ class SongTile extends StatelessWidget {
 ///
 /// See the comment at the top of the example for the full context.
 class SongArt extends StatefulWidget {
-  const SongArt({super.key, required this.song});
+  const SongArt({Key? key, required this.song}) : super(key: key);
 
   final Song song;
 

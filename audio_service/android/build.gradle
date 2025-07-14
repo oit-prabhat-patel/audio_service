@@ -1,18 +1,15 @@
-group = "com.ryanheise.audioservice"
-version "1.0-SNAPSHOT"
+group 'com.ryanheise.audioservice'
+version '1.0-SNAPSHOT'
 def args = ["-Xlint:deprecation","-Xlint:unchecked"]
 
 buildscript {
-    ext {
-        agp_version = '8.5.2'
-    }
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath "com.android.tools.build:gradle:$agp_version"
+        classpath 'com.android.tools.build:gradle:7.3.0'
     }
 }
 
@@ -27,18 +24,23 @@ project.getTasks().withType(JavaCompile) {
     options.compilerArgs.addAll(args)
 }
 
-apply plugin: "com.android.library"
+apply plugin: 'com.android.library'
 
 android {
-    namespace "com.ryanheise.audioservice"
-    compileSdk = 35
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'com.ryanheise.audioservice'
+    }
+    compileSdkVersion 33
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        minSdk = 19
+        minSdkVersion 16
+        targetSdkVersion 33
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -46,6 +48,5 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.media:media:1.7.0'
-    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.media:media:1.6.0'
 }
