@@ -341,9 +341,6 @@ public class AudioService extends MediaBrowserServiceCompat {
                 return bitmap.getByteCount() / 1024;
             }
         };
-
-        flutterEngine = AudioServicePlugin.getFlutterEngine(this);
-        System.out.println("flutterEngine warmed up");
     }
 
     @Override
