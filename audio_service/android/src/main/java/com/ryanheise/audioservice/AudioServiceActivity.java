@@ -22,4 +22,10 @@ public class AudioServiceActivity extends FlutterActivity {
             AudioService.instance.onDestroy(); 
         }  
     }  
+
+    @Override
+    protected void onNewIntent(Intent intent) { 
+        super.onNewIntent(intent);     
+        setIntent(intent);
+    }
 }
