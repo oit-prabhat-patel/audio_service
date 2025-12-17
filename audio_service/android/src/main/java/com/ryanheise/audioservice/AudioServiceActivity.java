@@ -27,6 +27,9 @@ public class AudioServiceActivity extends FlutterActivity {
     @Override
     protected void onNewIntent(Intent intent) { 
         super.onNewIntent(intent);     
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+           cleverTapDefaultInstance?.pushNotificationClickedEvent(intent!!.extras)
+        }
         setIntent(intent);
     }
 }
