@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import android.content.Intent;
+import android.os.Build;
+import com.clevertap.android.sdk.CleverTapAPI;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -27,9 +29,16 @@ public class AudioServiceActivity extends FlutterActivity {
     @Override
     protected void onNewIntent(Intent intent) { 
         super.onNewIntent(intent);     
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-           cleverTapDefaultInstance?.pushNotificationClickedEvent(intent!!.extras)
-        }
         setIntent(intent);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                CleverTapAPI ctInstance = CleverTapAPI.getDefaultInstance(this);
+                if (ctInstance != null && intent.getExtras() != null) {
+                    ctInstance.pushNotificationClickedEvent(intent.getExtras());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
