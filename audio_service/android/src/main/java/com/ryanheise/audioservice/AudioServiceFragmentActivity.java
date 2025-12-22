@@ -27,6 +27,22 @@ public class AudioServiceFragmentActivity extends FlutterFragmentActivity {
         return AudioServicePlugin.getFlutterEngineId();
     }
 
+    @Override
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // We can access 'instance' here because we are in the same package!
+        if (AudioService.instance != null) {
+            AudioService.instance.stop();
+            AudioService.instance.onDestroy();
+        }
+    }
+    
     // The engine is created and managed by AudioServicePlugin,
     // it should not be destroyed with the activity.
     @Override
