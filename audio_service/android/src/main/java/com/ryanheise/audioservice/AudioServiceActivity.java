@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import android.content.Intent;
 import android.os.Build;
-import com.clevertap.android.sdk.CleverTapAPI;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
