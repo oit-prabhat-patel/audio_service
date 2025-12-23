@@ -28,12 +28,6 @@ public class AudioServiceFragmentActivity extends FlutterFragmentActivity {
     }
 
     @Override
-    protected void onNewIntent(@NonNull Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         // We can access 'instance' here because we are in the same package!
